@@ -169,6 +169,32 @@ vim.keymap.set("n", "<leader>3", function() ui.nav_file(3) end)
 vim.keymap.set("n", "<leader>4", function() ui.nav_file(4) end)
 
 vim.cmd.colorscheme("gruvbox")
+
+-- formatters
+require('conform').setup {
+  formatters_by_ft = {
+    lua = { 'stylua' },
+    python = { 'ruff' },
+    go = { 'goimports' },
+    java = { 'google-java-format' },
+
+    javascript = { 'prettierd' },
+    javascriptreact = { 'prettierd' },
+    typescript = { 'prettierd' },
+    typescriptreact = { 'prettierd' },
+
+    json = { 'prettierd' },
+    html = { 'prettierd' },
+    css = { 'prettierd' },
+    scss = { 'prettierd' },
+    markdown = { 'prettier' },
+    yaml = { 'prettierd' },
+
+    graphql = { 'prettierd' },
+    vue = { 'prettierd' },
+    angular = { 'prettierd' },
+  },
+}
 -- vsplit
 vim.keymap.set("n", "|", function()
   vim.cmd("botright vsplit")
