@@ -76,7 +76,8 @@ vim.pack.add {
     'https://github.com/nvim-lualine/lualine.nvim',
     "https://github.com/mason-org/mason.nvim",
     "https://github.com/mason-org/mason-lspconfig.nvim",
-    "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim"
+    "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim",
+    "https://github.com/stevearc/conform.nvim",
 }
 
 -------------------- PLUGIN CONFIG -----------------------
@@ -115,6 +116,35 @@ require('oil').setup({
 })
 
 require('nvim-autopairs').setup()
+
+require('gitsigns').setup({
+  signs = {
+    add          = { text = '+' },
+    change       = { text = '~' },
+    delete       = { text = '_' },
+    topdelete    = { text = '‾' },
+    changedelete = { text = '~' },
+  },
+  on_attach = function(bufnr)
+    local gs = require('gitsigns')
+    local map = function(mode, lhs, rhs, desc)
+      vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc })
+    end
+
+    map('n', ']c', function() gs.nav_hunk('next') end, 'Next hunk')
+    map('n', '[c', function() gs.nav_hunk('prev') end, 'Prev hunk')
+
+    map('n', '<leader>hp', gs.preview_hunk, 'Preview hunk')
+    map('n', '<leader>hs', gs.stage_hunk, 'Stage hunk')
+    map('n', '<leader>hu', gs.undo_stage_hunk, 'Unstage hunk')
+    map('n', '<leader>hr', gs.reset_hunk, 'Reset hunk')
+    map('n', '<leader>hd', gs.diffthis, 'Diff against index')
+    map('n', '<leader>hD', function() gs.diffthis('~') end, 'Diff against HEAD')
+    map('n', '<leader>ht', gs.toggle_deleted, 'Toggle deleted lines')
+
+    map({ 'o', 'x' }, 'ih', '<cmd>Gitsigns select_hunk<cr>', 'Inner hunk')
+  end,
+})
 
 require('nvim-ts-autotag').setup()
 
@@ -212,7 +242,7 @@ end, { noremap = true, silent = true })
 
 -- telescope -- 
 local builtin = require('telescope.builtin')
-vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = 'Find files' })
+vim.keymap.set('n', '<leader>sf', function() builtin.find_files({ hidden = true }) end, { desc = 'Find files' })
 vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = 'Live grep' })
 vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = 'Buffers' })
 vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = 'Help tags' })
@@ -336,12 +366,30 @@ local lsp_servers = {
 		},
 	},
 	jdtls = {},
+	postgres_lsp = {},
+	tailwindcss = {},
 }
 
 require("mason").setup()
 require("mason-lspconfig").setup()
 require("mason-tool-installer").setup({
-  ensure_installed = vim.tbl_keys(lsp_servers),
+  ensure_installed = vim.list_extend(vim.tbl_keys(lsp_servers), { "prettier" }),
+})
+
+require("conform").setup({
+  formatters_by_ft = {
+    javascript      = { "prettier" },
+    typescript      = { "prettier" },
+    javascriptreact = { "prettier" },
+    typescriptreact = { "prettier" },
+    html            = { "prettier" },
+    css             = { "prettier" },
+    scss            = { "prettier" },
+    json            = { "prettier" },
+    yaml            = { "prettier" },
+    markdown        = { "prettier" },
+  },
+  format_on_save = { timeout_ms = 500, lsp_fallback = true },
 })
 
 -- configure each lsp server on the table
@@ -387,7 +435,23 @@ end
 
 -- :TSInstall bash c cpp diff html css javascript typescript tsx lua luadoc markdown vim python json go java yaml dockerfile sql regex query scss xml csv ini toml make helm graphql http rust php
 
-vim.keymap.set('i', '<Esc>', '<Esc>:w<CR>', { noremap = true, silent = true })
+local group = vim.api.nvim_create_augroup('AutoSave', { clear = true })
+
+vim.api.nvim_create_autocmd(
+{ 'InsertLeave', 'TextChanged', 'FocusLost', 'BufLeave' },
+{
+group = group,
+callback = function()
+local b = vim.api.nvim_get_current_buf()
+if vim.bo[b].buftype == ''
+  and vim.bo[b].modifiable
+  and vim.api.nvim_buf_get_name(b) ~= ''
+then
+  vim.cmd('silent! update')
+end
+end,
+}
+)
 
 -- oil root
 vim.keymap.set('n', '<leader>O', function()

@@ -9,6 +9,8 @@ keybind = global:cmd+§=toggle_quick_terminal
 font-family = "JetBrainsMono Nerd Font"
 font-style = Regular
 font-size = 16
+font-feature = -calt
+font-feature = -liga
 
 # Window
 confirm-close-surface=false
