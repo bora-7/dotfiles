@@ -272,6 +272,16 @@ vim.keymap.set('n', '<leader>sf', function() builtin.find_files({ hidden = true 
 vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = 'Live grep' })
 vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = 'Buffers' })
 vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = 'Help tags' })
+vim.keymap.set('n', 'fd', function()
+  local ft_prefix = ({
+    python     = 'def ',
+    go         = 'func ',
+    rust       = 'fn ',
+    javascript = 'function ',
+    typescript = 'function ',
+  })[vim.bo.filetype] or 'def '
+  builtin.grep_string({ search = ft_prefix .. vim.fn.expand('<cword>') })
+end, { desc = 'Find definition by name' })
 
 -- Telescope Workspace Errors
 vim.keymap.set(
@@ -430,8 +440,9 @@ for server, config in pairs(lsp_servers) do
         { buffer = bufnr, desc = "vim.lsp.buf.definition()" })
       vim.keymap.set("n", "grt", vim.lsp.buf.type_definition,
         { buffer = bufnr, desc = "vim.lsp.buf.type_definition()" })
-      vim.keymap.set("n", "grf", vim.lsp.buf.format,
-        { buffer = bufnr, desc = "vim.lsp.buf.format()" })
+      vim.keymap.set("n", "grf", function()
+        require("conform").format({ async = true, lsp_fallback = true })
+      end, { buffer = bufnr, desc = "Format buffer (conform)" })
       vim.keymap.set("n", "grr", vim.lsp.buf.references,
         { buffer = bufnr, desc = "vim.lsp.buf.references()" })
       
