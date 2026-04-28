@@ -174,7 +174,7 @@ vim.cmd.colorscheme("gruvbox")
 require('conform').setup {
   formatters_by_ft = {
     lua = { 'stylua' },
-    python = { 'ruff' },
+    python = { 'ruff_format' },
     go = { 'goimports' },
     java = { 'google-java-format' },
 
@@ -194,6 +194,7 @@ require('conform').setup {
     vue = { 'prettierd' },
     angular = { 'prettierd' },
   },
+  format_on_save = { timeout_ms = 500, lsp_fallback = true },
 }
 -- vsplit
 vim.keymap.set("n", "|", function()
@@ -271,6 +272,7 @@ local builtin = require('telescope.builtin')
 vim.keymap.set('n', '<leader>sf', function() builtin.find_files({ hidden = true }) end, { desc = 'Find files' })
 vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = 'Live grep' })
 vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = 'Buffers' })
+vim.keymap.set('n', '<leader>gs', builtin.git_status, { desc = 'Git status' })
 vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = 'Help tags' })
 vim.keymap.set('n', 'fd', function()
   local ft_prefix = ({
@@ -349,19 +351,6 @@ local lsp_servers = {
 	jsonls = {}, -- vscode-json-language-server
 	-- eslint = {}, -- vscode-eslint-language-server
 	clangd = {},
-	gopls = {
-		settings = {
-			gopls = {
-				analyses = {
-					unusedparams = true, -- warns about unused function parameters
-					nilness = true, -- warns about possible nil dereferences
-					unusedwrite = true, -- warns about values written but never read
-					shadow = true, -- variable shadowing
-				},
-				staticcheck = true, -- enables many linter-like warnings
-			},
-		},
-	},
 	ts_ls = {
 		settings = {
 			typescript = {
@@ -409,24 +398,11 @@ local lsp_servers = {
 require("mason").setup()
 require("mason-lspconfig").setup()
 require("mason-tool-installer").setup({
-  ensure_installed = vim.list_extend(vim.tbl_keys(lsp_servers), { "prettier" }),
+  ensure_installed = vim.list_extend(vim.tbl_keys(lsp_servers), {
+    "prettier", "prettierd", "ruff", "stylua", "goimports",
+  }),
 })
 
-require("conform").setup({
-  formatters_by_ft = {
-    javascript      = { "prettier" },
-    typescript      = { "prettier" },
-    javascriptreact = { "prettier" },
-    typescriptreact = { "prettier" },
-    html            = { "prettier" },
-    css             = { "prettier" },
-    scss            = { "prettier" },
-    json            = { "prettier" },
-    yaml            = { "prettier" },
-    markdown        = { "prettier" },
-  },
-  format_on_save = { timeout_ms = 500, lsp_fallback = true },
-})
 
 -- configure each lsp server on the table
 -- to check what clients are attached to the current buffer, use
