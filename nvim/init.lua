@@ -175,7 +175,6 @@ require('conform').setup {
   formatters_by_ft = {
     lua = { 'stylua' },
     python = { 'ruff_format' },
-    go = { 'goimports' },
     java = { 'google-java-format' },
 
     javascript = { 'prettierd' },
@@ -277,7 +276,6 @@ vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = 'Help tags' })
 vim.keymap.set('n', 'fd', function()
   local ft_prefix = ({
     python     = 'def ',
-    go         = 'func ',
     rust       = 'fn ',
     javascript = 'function ',
     typescript = 'function ',
@@ -399,7 +397,7 @@ require("mason").setup()
 require("mason-lspconfig").setup()
 require("mason-tool-installer").setup({
   ensure_installed = vim.list_extend(vim.tbl_keys(lsp_servers), {
-    "prettier", "prettierd", "ruff", "stylua", "goimports",
+    "prettier", "prettierd", "ruff", "stylua"
   }),
 })
 
@@ -446,7 +444,7 @@ for server, config in pairs(lsp_servers) do
   vim.lsp.enable(server)
 end
 
--- :TSInstall bash c cpp diff html css javascript typescript tsx lua luadoc markdown vim python json go java yaml dockerfile sql regex query scss xml csv ini toml make helm graphql http rust php
+-- :TSInstall bash c cpp diff html css javascript typescript tsx lua luadoc markdown vim python json java yaml dockerfile sql regex query scss xml csv ini toml make helm graphql http rust php
 
 local group = vim.api.nvim_create_augroup('AutoSave', { clear = true })
 
