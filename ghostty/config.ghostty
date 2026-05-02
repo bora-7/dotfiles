@@ -33,3 +33,7 @@ mouse-scroll-multiplier = 0.95
 
 # shaders
 custom-shader = shaders/cursor_smear_original.glsl
+
+# copy paste
+clipboard-read = allow
+clipboard-write = allow
