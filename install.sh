@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DOTFILES="$HOME/.config/dotfiles"  # adjust to wherever you clone the repo
+DOTFILES="$HOME/.config"  # adjust to wherever you clone the repo
 
 # Create symlinks
 ln -sf "$DOTFILES/ghostty"            "$HOME/.config/ghostty"
