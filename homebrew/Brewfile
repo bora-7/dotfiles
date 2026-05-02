@@ -1,0 +1,25 @@
+tap "homebrew/services"
+tap "stripe/stripe-cli"
+
+# Core dev tools
+brew "neovim"
+brew "tmux"
+brew "git"
+brew "gh"
+brew "fzf"
+brew "fd"
+brew "ripgrep"
+brew "tree"
+
+# Bootleg.fm
+brew "nvm"
+brew "python@3.12"
+brew "redis"
+brew "ffmpeg"
+brew "stripe/stripe-cli/stripe"
+
+# Fonts
+cask "font-jetbrains-mono-nerd-font"
+
+# Apps
+cask "ghostty"
